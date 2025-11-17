@@ -2,7 +2,7 @@ import asyncio
 import random
 from collections import defaultdict
 from datetime import timedelta
-from typing import List, Literal, Optional
+from typing import List, Literal, Optional, Tuple
 
 from gsuid_core.bot import Bot
 from gsuid_core.logger import logger
@@ -158,7 +158,40 @@ async def subscribe_mh(
         await option_add_mh(bot, ev, ev.user_id, mh_name, mh_type)
 
 
-async def get_mh_subscribe_list(bot: Bot, ev: Event, user_id: str) -> List[str]:
+async def subscribe_mh_time(
+    bot: Bot,
+    ev: Event,
+    user_id: str,
+    start_time: int,
+    end_time: int,
+):
+
+    data = await gs_subscribe.get_subscribe(
+        BoardcastTypeEnum.MH_SUBSCRIBE,
+        user_id=ev.user_id,
+        bot_id=ev.bot_id,
+        user_type=ev.user_type,
+        WS_BOT_ID=ev.WS_BOT_ID,
+        uid=user_id,
+    )
+    if not data:
+        await send_dna_notify(bot, ev, "未曾订阅密函")
+        return
+
+    await gs_subscribe.update_subscribe_data(
+        "single",
+        BoardcastTypeEnum.MH_SUBSCRIBE,
+        ev,
+        extra_data=f"{start_time}:{end_time}",
+        uid=user_id,
+    )
+
+    await get_mh_subscribe(bot, ev)
+
+
+async def get_mh_subscribe_list(
+    bot: Bot, ev: Event, user_id: str
+) -> Tuple[List[str], str]:
     subscribe_data = await gs_subscribe.get_subscribe(
         BoardcastTypeEnum.MH_SUBSCRIBE,
         user_id=ev.user_id,
@@ -168,20 +201,30 @@ async def get_mh_subscribe_list(bot: Bot, ev: Event, user_id: str) -> List[str]:
         uid=user_id,
     )
     if not subscribe_data:
-        return []
+        return [], ""
     if not subscribe_data[0].extra_message:
-        return []
+        return [], ""
 
     mh_list = str2list(subscribe_data[0].extra_message)
-    return mh_list
+    push_time = subscribe_data[0].extra_data or ""
+    return mh_list, push_time
 
 
 async def get_mh_subscribe(bot: Bot, ev: Event):
-    mh_list = await get_mh_subscribe_list(bot, ev, ev.user_id)
+    mh_list, push_time = await get_mh_subscribe_list(bot, ev, ev.user_id)
     if not mh_list:
         await send_dna_notify(bot, ev, "未曾订阅密函")
         return
-    return await send_dna_notify(bot, ev, f"当前订阅密函: {','.join(mh_list)}")
+    msg = [
+        f"当前订阅密函: {','.join(mh_list)}",
+    ]
+    if push_time:
+        start_time, end_time = push_time.split(":")
+        msg.append(f"推送时间: {start_time}点-{end_time}点")
+    else:
+        msg.append("推送时间: 不限制")
+        msg.append(f"可以使用命令设置推送时间: {DNA_PREFIX}订阅密函时间17:23")
+    return await send_dna_notify(bot, ev, "\n".join(msg))
 
 
 async def send_mh_notify():
@@ -218,9 +261,6 @@ async def send_mh_notify():
             mh_re_datas[subscribe_mh_key(mh_name, mh_type_name)].append(ins.mh_type)
     # set("拆解", "勘探", "追缉", "角色:拆解", "武器:勘探", "魔之楔:勘探")
     mh_name_set = set(mh_re_datas.keys())
-
-    logger.info(f"mh_name_set: {mh_name_set}")
-    logger.info(f"mh_re_datas: {mh_re_datas}")
 
     async def private_push(subscribe: Subscribe, valid_mh_list: list[str]):
         if not valid_mh_list:
@@ -265,16 +305,21 @@ async def send_mh_notify():
         if subscribe.group_id not in groupid2sub:
             groupid2sub[subscribe.group_id] = subscribe
 
+    datetime_now = get_datetime()
     for subscribe in subscribe_data:
         if not subscribe.extra_message:
             continue
 
+        if subscribe.extra_data:
+            start_time, end_time = subscribe.extra_data.split(":")
+            if datetime_now.hour < int(start_time) or datetime_now.hour > int(end_time):
+                continue
+
+        my_mh_list = str2list(subscribe.extra_message)
         valid_mh_list = []
         for i in mh_name_set:
-            if i == subscribe.extra_message:
+            if i in my_mh_list:
                 valid_mh_list.append(i)
-
-        logger.info(f"valid_mh_list: {valid_mh_list}")
 
         if (
             "private" in DNAConfig.get_config("MHSubscribe").data

@@ -38,7 +38,7 @@ async def draw_mh(bot: Bot, ev: Event):
         await send_dna_notify(bot, ev, "未找到有效的密函数据")
         return
 
-    mh_list = await get_mh_subscribe_list(bot, ev, ev.user_id)
+    mh_list, _ = await get_mh_subscribe_list(bot, ev, ev.user_id)
 
     card = Image.open(TEXT_PATH / random.choice(bg_list)).convert("RGBA")
 
