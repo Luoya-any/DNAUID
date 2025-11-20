@@ -270,6 +270,10 @@ async def get_avatar_title_img(
     return img
 
 
+def get_footer():
+    return Image.open(TEXT_PATH / "footer.png")
+
+
 def add_footer(
     img: Image.Image,
     w: int = 0,

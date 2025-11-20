@@ -7,7 +7,7 @@ from gsuid_core.sv import SV
 
 from ..utils.resource.download_all_resource import download_all_resource
 
-sv_download_config = SV("资源下载", pm=1)
+sv_download_config = SV("dna资源下载", pm=1)
 
 
 @sv_download_config.on_fullmatch(("下载全部资源"))
