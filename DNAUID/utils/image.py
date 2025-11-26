@@ -66,6 +66,9 @@ COLOR_BLUE = (30, 40, 60)
 COLOR_PURPLE = (138, 43, 226)
 
 
+Color = Union[str, Tuple[int, int, int], Tuple[int, int, int, int]]
+
+
 def get_ICON():
     return Image.open(ICON).convert("RGBA")
 
@@ -248,10 +251,11 @@ async def get_avatar_title_img(
         "lm",
     )
 
-    draw.rounded_rectangle(
+    get_smooth_drawer().rounded_rectangle(
         (320, 140, 320 + 330, 140 + 40),
         15,
         COLOR_PALE_GOLDENROD,
+        target=img,
     )
 
     draw.text(
@@ -363,6 +367,65 @@ def add_footer(
 
     img.paste(footer, (x, y), footer)
     return img
+
+
+class SmoothDrawer:
+    """通用抗锯齿绘制工具"""
+
+    def __init__(self, scale: int = 4):
+        self.scale = scale
+
+    def rounded_rectangle(
+        self,
+        xy: Union[Tuple[int, int, int, int], Tuple[int, int]],
+        radius: int,
+        fill: Optional[Color] = None,
+        outline: Optional[Color] = None,
+        width: int = 0,
+        target: Optional[Image.Image] = None,
+    ):
+        if len(xy) == 4:
+            # 边界框坐标 (x0, y0, x1, y1)
+            x0, y0, x1, y1 = xy
+            w = abs(x1 - x0)
+            h = abs(y1 - y0)
+            # 如果提供了目标图片，使用边界框的实际坐标
+            paste_x, paste_y = min(x0, x1), min(y0, y1)
+        elif len(xy) == 2:
+            # 尺寸 (width, height) - 向后兼容
+            w, h = xy
+            paste_x, paste_y = 0, 0
+        else:
+            raise ValueError(
+                f"xy 参数必须是 2 或 4 个元素的元组，当前为 {len(xy)} 个元素"
+            )
+
+        if h <= 0 or w <= 0:
+            return
+
+        large = Image.new("RGBA", (w * self.scale, h * self.scale), (0, 0, 0, 0))
+        draw = ImageDraw.Draw(large)
+
+        # 绘制
+        draw.rounded_rectangle(
+            (0, 0, w * self.scale, h * self.scale),
+            radius=radius * self.scale,
+            fill=fill,
+            outline=outline,
+            width=width * self.scale,
+        )
+
+        result = large.resize((w, h))
+
+        if target is not None:
+            target.alpha_composite(result, (paste_x, paste_y))
+            return
+
+        return
+
+
+def get_smooth_drawer(scale: int = 4) -> SmoothDrawer:
+    return SmoothDrawer(scale=scale)
 
 
 def compress_to_webp(

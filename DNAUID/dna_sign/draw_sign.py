@@ -33,6 +33,7 @@ from ..utils.image import (
     get_avatar_title_img,
     get_div,
     get_dna_bg,
+    get_smooth_drawer,
 )
 from ..utils.msgs.notify import dna_not_found
 from ..utils.resource.RESOURCE_PATH import SIGN_PATH
@@ -131,9 +132,11 @@ async def _draw_sign_calendar(
 
             line_draw.text((40, 20), task.remark, COLOR_WHITE, dna_font_26, "lm")
 
-            progress = int(368 + 500 * task.process)
-            # 进度条 总长度为500
-            line_draw.rounded_rectangle((368, 5, progress, 25), 10, COLOR_WHITE)
+            progress = int(368 + 496 * task.process)
+            # 进度条 总长度为496
+            get_smooth_drawer().rounded_rectangle(
+                (372, 9, progress, 24), 10, COLOR_WHITE, target=line
+            )
             card.alpha_composite(line, (200, start_y))
             start_y += 60
 
@@ -166,11 +169,12 @@ async def _draw_sign_calendar(
             )
 
             if is_current:
-                item_bg_draw.rounded_rectangle(
+                get_smooth_drawer().rounded_rectangle(
                     (3, 3, item_bg.width - 3 - 2, item_bg.height - 3 - 32),
                     10,
                     outline=COLOR_GOLDENROD,
                     width=3,
+                    target=item_bg,
                 )
 
         icon = global_green if is_signed else global_red

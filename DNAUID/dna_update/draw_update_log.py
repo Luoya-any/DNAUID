@@ -9,7 +9,7 @@ from gsuid_core.logger import logger
 from gsuid_core.utils.image.convert import convert_img
 
 from ..utils.fonts.dna_fonts import dna_font_origin, emoji_font
-from ..utils.image import get_dna_bg
+from ..utils.image import get_dna_bg, get_smooth_drawer
 
 
 def _get_git_logs() -> List[str]:
@@ -121,11 +121,11 @@ async def draw_update_log_img() -> Union[bytes, str]:
         bg_y = base_y + 7
 
         rounded_bg = Image.new("RGBA", (bg_width, bg_height), (0, 0, 0, 0))
-        rounded_bg_draw = ImageDraw.Draw(rounded_bg)
-        rounded_bg_draw.rounded_rectangle(
-            [(0, 0), (bg_width, bg_height)],
+        get_smooth_drawer().rounded_rectangle(
+            (0, 0, bg_width, bg_height),
             radius=15,
             fill=(128, 128, 128, 100),
+            target=rounded_bg,
         )
         img.paste(rounded_bg, (bg_x, bg_y), rounded_bg)
 

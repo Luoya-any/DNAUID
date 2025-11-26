@@ -27,6 +27,7 @@ from ..utils.image import (
     get_avatar_img,
     get_avatar_title_img,
     get_dna_bg,
+    get_smooth_drawer,
     get_weapon_attr_img,
     get_weapon_img,
 )
@@ -274,9 +275,8 @@ async def _draw_item(
             # 当前命座
             grade_img = grades[item.grade_level]
             ellipse = Image.new("RGBA", (34, 35))
-            ellipse_draw = ImageDraw.Draw(ellipse)
-            ellipse_draw.rounded_rectangle(
-                (0, 0, 34, 35), fill=COLOR_FIRE_BRICK, radius=7
+            get_smooth_drawer().rounded_rectangle(
+                (0, 0, 34, 35), fill=COLOR_FIRE_BRICK, radius=7, target=ellipse
             )
             ellipse.alpha_composite(grade_img, (0, 5))
             fg.alpha_composite(ellipse, (145, 35))

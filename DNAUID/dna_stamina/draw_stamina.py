@@ -17,6 +17,7 @@ from ..utils.image import (
     COLOR_WHITE,
     add_footer,
     get_avatar_title_img,
+    get_smooth_drawer,
 )
 from ..utils.msgs.notify import (
     dna_not_found,
@@ -122,10 +123,12 @@ async def draw_stamina_img(bot: Bot, ev: Event):
         if progress_per > 1:
             progress_per = 1
 
-        progress = int(150 + 840 * progress_per)
+        progress = int(152 + 837 * progress_per)
 
-        # 进度条 总长度为840
-        bar_bg_temp_draw.rounded_rectangle((150, 70, progress, 90), 10, COLOR_WHITE)
+        # 进度条 总长度为837
+        get_smooth_drawer().rounded_rectangle(
+            (152, 73, progress, 90), 10, COLOR_WHITE, target=bar_bg_temp
+        )
 
         card.alpha_composite(bar_bg_temp, (80, 400 + index * 150))
 
