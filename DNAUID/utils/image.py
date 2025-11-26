@@ -333,6 +333,10 @@ def get_footer():
     return Image.open(TEXT_PATH / "footer.png")
 
 
+def get_div():
+    return Image.open(TEXT_PATH / "div.png")
+
+
 def add_footer(
     img: Image.Image,
     w: int = 0,

@@ -37,18 +37,18 @@ from ..utils.msgs.notify import (
 )
 
 TEXT_PATH = Path(__file__).parent / "texture2d"
-global_item_fg = Image.open(TEXT_PATH / "item_fg.png").convert("RGBA")
-global_item_mask = Image.open(TEXT_PATH / "item_mask.png").convert("RGBA")
-global_role_bg = Image.open(TEXT_PATH / "bg/bg1.png").convert("RGBA")
-global_lang_weapon_bg = Image.open(TEXT_PATH / "bg/bg4.png").convert("RGBA")
-global_close_weapon_bg = Image.open(TEXT_PATH / "bg/bg5.png").convert("RGBA")
-GRADE_0 = Image.open(TEXT_PATH / "number/0.png").convert("RGBA")
-GRADE_1 = Image.open(TEXT_PATH / "number/1.png").convert("RGBA")
-GRADE_2 = Image.open(TEXT_PATH / "number/2.png").convert("RGBA")
-GRADE_3 = Image.open(TEXT_PATH / "number/3.png").convert("RGBA")
-GRADE_4 = Image.open(TEXT_PATH / "number/4.png").convert("RGBA")
-GRADE_5 = Image.open(TEXT_PATH / "number/5.png").convert("RGBA")
-GRADE_6 = Image.open(TEXT_PATH / "number/6.png").convert("RGBA")
+global_item_fg = Image.open(TEXT_PATH / "item_fg.png")
+global_item_mask = Image.open(TEXT_PATH / "item_mask.png")
+global_role_bg = Image.open(TEXT_PATH / "bg/bg1.png")
+global_lang_weapon_bg = Image.open(TEXT_PATH / "bg/bg4.png")
+global_close_weapon_bg = Image.open(TEXT_PATH / "bg/bg5.png")
+GRADE_0 = Image.open(TEXT_PATH / "number/0.png")
+GRADE_1 = Image.open(TEXT_PATH / "number/1.png")
+GRADE_2 = Image.open(TEXT_PATH / "number/2.png")
+GRADE_3 = Image.open(TEXT_PATH / "number/3.png")
+GRADE_4 = Image.open(TEXT_PATH / "number/4.png")
+GRADE_5 = Image.open(TEXT_PATH / "number/5.png")
+GRADE_6 = Image.open(TEXT_PATH / "number/6.png")
 grades = [GRADE_0, GRADE_1, GRADE_2, GRADE_3, GRADE_4, GRADE_5, GRADE_6]
 hang_num = 5
 
@@ -116,8 +116,8 @@ async def draw_role_info_card(bot: Bot, ev: Event):
     card = get_dna_bg(1200, h, "bg1")
 
     start_y = 0
-    title_mask = Image.open(TEXT_PATH / "title_mask.png").convert("RGBA")
-    title_bg = Image.open(TEXT_PATH / "title_bg.jpg").convert("RGBA")
+    title_mask = Image.open(TEXT_PATH / "title_mask.png")
+    title_bg = Image.open(TEXT_PATH / "title_bg.jpg")
     title_bg = title_bg.resize((title_mask.width, title_mask.height))
     card.paste(title_bg, (0, 0), title_mask)
     start_y += 650
@@ -137,7 +137,7 @@ async def draw_role_info_card(bot: Bot, ev: Event):
     card.alpha_composite(avatar_title, (-50, 400))
 
     # info
-    info_bar = Image.open(TEXT_PATH / "info_bar.png").convert("RGBA")
+    info_bar = Image.open(TEXT_PATH / "info_bar.png")
     info_bar_draw = ImageDraw.Draw(info_bar)
 
     for index, info in enumerate(achievement_info):
@@ -154,7 +154,7 @@ async def draw_role_info_card(bot: Bot, ev: Event):
     start_y += 100
 
     # div bg
-    div_bg = Image.open(TEXT_PATH / "div_bg.png").convert("RGBA")
+    div_bg = Image.open(TEXT_PATH / "div_bg.png")
     div_bg_draw = ImageDraw.Draw(div_bg)
     div_bg_draw.text((600, 33), "角色信息", COLOR_WHITE, dna_font_40, "mm")
     card.alpha_composite(div_bg, (0, start_y))
@@ -180,7 +180,7 @@ async def draw_role_info_card(bot: Bot, ev: Event):
     )
 
     # div bg
-    div_bg = Image.open(TEXT_PATH / "div_bg.png").convert("RGBA")
+    div_bg = Image.open(TEXT_PATH / "div_bg.png")
     div_bg_draw = ImageDraw.Draw(div_bg)
     div_bg_draw.text((600, 33), "近战武器", COLOR_WHITE, dna_font_40, "mm")
     card.alpha_composite(div_bg, (0, start_y))
@@ -205,7 +205,7 @@ async def draw_role_info_card(bot: Bot, ev: Event):
     )
 
     # div bg
-    div_bg = Image.open(TEXT_PATH / "div_bg.png").convert("RGBA")
+    div_bg = Image.open(TEXT_PATH / "div_bg.png")
     div_bg_draw = ImageDraw.Draw(div_bg)
     div_bg_draw.text((600, 33), "远程武器", COLOR_WHITE, dna_font_40, "mm")
     card.alpha_composite(div_bg, (0, start_y))

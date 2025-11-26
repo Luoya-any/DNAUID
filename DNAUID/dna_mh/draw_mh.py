@@ -53,15 +53,15 @@ async def draw_mh_card(
 ):
     card = Image.open(TEXT_PATH / random.choice(bg_list)).convert("RGBA")
 
-    bar_bg = Image.open(TEXT_PATH / "bar.png").convert("RGBA")
+    bar_bg = Image.open(TEXT_PATH / "bar.png")
     for i, mh in enumerate(mh_result):
         if not mh.mh_type:
             logger.warning(f"mh_type is None: {mh.model_json_schema()}")
             continue
 
-        mh_card = Image.open(TEXT_PATH / "card.png").convert("RGBA")
+        mh_card = Image.open(TEXT_PATH / "card.png")
         mh_card_draw = ImageDraw.Draw(mh_card)
-        title_type_img = Image.open(TEXT_PATH / f"mh_{mh.mh_type}.png").convert("RGBA")
+        title_type_img = Image.open(TEXT_PATH / f"mh_{mh.mh_type}.png")
         mh_card.alpha_composite(title_type_img, (120, 70))
 
         for j, ins in enumerate(mh.instances):
@@ -85,14 +85,14 @@ async def draw_mh_card(
 
         card.alpha_composite(mh_card, (i * 500 + 100, 70))
 
-    refresh_bg = Image.open(TEXT_PATH / "refresh_time.png").convert("RGBA")
+    refresh_bg = Image.open(TEXT_PATH / "refresh_time.png")
     draw_refresh_bg = ImageDraw.Draw(refresh_bg)
     draw_refresh_bg.text(
         (60, 25), f"{format_seconds(remaining_seconds)}后刷新", COLOR_WHITE, dna_font_20
     )
     card.alpha_composite(refresh_bg, (1400, 20))
 
-    title_bg = Image.open(TEXT_PATH / "title.png").convert("RGBA")
+    title_bg = Image.open(TEXT_PATH / "title.png")
     card.alpha_composite(title_bg, (0, 0))
 
     card = add_footer(card, 600)
