@@ -116,10 +116,14 @@ async def draw_role_info_card(bot: Bot, ev: Event):
     card.paste(title_bg, (0, 0), title_mask)
     start_y += 650
 
+    # 获取用于显示的UID
+    from ..utils import get_display_uid
+    display_uid = await get_display_uid(uid, ev.user_id, ev.bot_id)
+    
     # title
     avatar_title = await get_avatar_title_img(
         ev,
-        role_show.roleId,
+        uid,  # 原始uid（不直接显示）
         role_show.roleName,
         user_level=role_show.level,
         other_info=[
@@ -127,6 +131,7 @@ async def draw_role_info_card(bot: Bot, ev: Event):
             for i in role_show.params
             if i.paramKey in ("总活跃天数", "成就达成")
         ],
+        display_uid=display_uid,  # 用于显示的uid
     )
     card.alpha_composite(avatar_title, (-50, 400))
 

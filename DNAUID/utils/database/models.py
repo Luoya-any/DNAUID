@@ -98,6 +98,7 @@ class DNAUser(User, table=True):
     cookie: str = Field(default="", title="Cookie")
     uid: str = Field(default=None, title="二重螺旋uid")
     dev_code: str = Field(default=None, title="设备ID")
+    hide_uid: int = Field(default=1, title="隐藏UID(0:显示 1:隐藏)")
 
     @classmethod
     @with_session

@@ -81,7 +81,36 @@
       }
     ]
   },
-  "密函":{
+  "隐私设置": {
+    "desc": "保护个人隐私信息",
+    "data": [
+      {
+        "name": "隐藏UID",
+        "desc": "开启后作图将不显示完整UID",
+        "eg": "隐藏uid",
+        "need_ck": false,
+        "need_sk": false,
+        "need_admin": false
+      },
+      {
+        "name": "显示UID",
+        "desc": "关闭UID隐藏，正常显示",
+        "eg": "显示uid",
+        "need_ck": false,
+        "need_sk": false,
+        "need_admin": false
+      },
+      {
+        "name": "查看隐私设置",
+        "desc": "查看当前隐私设置状态",
+        "eg": "隐私设置",
+        "need_ck": false,
+        "need_sk": false,
+        "need_admin": false
+      }
+    ]
+  },
+  "密函": {
     "desc": "密函功能",
     "data": [
       {

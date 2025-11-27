@@ -69,13 +69,19 @@ async def draw_stamina_img(bot: Bot, ev: Event):
         for i in role_show.params
         if i.paramKey in ("总活跃天数", "成就达成", "获得角色数")
     ]
+    
+    # 获取用于显示的UID
+    from ..utils import get_display_uid
+    display_uid = await get_display_uid(uid, ev.user_id, ev.bot_id)
+    
     # title
     avatar_title = await get_avatar_title_img(
         ev,
-        role_show.roleId,
+        uid,  # 原始uid（不直接显示）
         role_show.roleName,
         user_level=role_show.level,
         other_info=other_info,
+        display_uid=display_uid,  # 用于显示的uid
     )
     card.alpha_composite(avatar_title, (-50, 30))
 

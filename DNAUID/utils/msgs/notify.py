@@ -82,31 +82,61 @@ async def dna_login_success(bot: Bot, ev: Event, need_at: bool = True):
 async def dna_bind_uid_result(
     bot: Bot, ev: Event, uid: str = "", code: int = 0, need_at: bool = True
 ):
+    """
+    绑定UID结果通知
+    
+    Args:
+        bot: Bot对象
+        ev: Event对象
+        uid: 原始uid（用于API调用）
+        code: 结果代码
+        need_at: 是否需要@用户
+    """
     from ...dna_config.prefix import DNA_PREFIX
+
+    # 对于需要显示UID的情况，获取display_uid
+    display_uid = uid
+    if uid and code in [0, 1, 2, 4, -1, -2]:
+        from ..privacy import get_display_uid
+
+        # 对于查看列表(code=2)，需要处理多个UID
+        if code == 2 and "\n" in uid:
+            uid_list = uid.split("\n")  # uid_list中都是原始uid
+            display_list = []
+            for single_uid in uid_list:
+                # 获取每个uid对应的display_uid
+                single_display_uid = await get_display_uid(
+                    single_uid, ev.user_id, ev.bot_id
+                )
+                display_list.append(single_display_uid)
+            display_uid = "\n".join(display_list)
+        else:
+            # 单个UID的情况
+            display_uid = await get_display_uid(uid, ev.user_id, ev.bot_id)
 
     code_map = {
         4: [
-            f"UID: [{uid}]删除成功！",
+            f"UID: [{display_uid}]删除成功！",
         ],
         3: [
             "删除全部UID成功！",
         ],
         2: [
-            f"绑定的UID列表为：\n{uid}",
+            f"绑定的UID列表为：\n{display_uid}",
         ],
         1: [
-            f"UID: [{uid}]切换成功！",
+            f"UID: [{display_uid}]切换成功！",
         ],
         0: [
-            f"UID: [{uid}]绑定成功！",
+            f"UID: [{display_uid}]绑定成功！",
             f"当前仅支持查询部分信息，完整功能请使用【{DNA_PREFIX}登录】",
         ],
         -1: [
-            f"UID: [{uid}]的位数不正确！",
+            f"UID: [{display_uid}]的位数不正确！",
             f"请重新输入命令【{DNA_PREFIX}绑定 UID】进行绑定",
         ],
         -2: [
-            f"UID: [{uid}]已经绑定过了！",
+            f"UID: [{display_uid}]已经绑定过了！",
             f"请重新输入命令【{DNA_PREFIX}绑定 UID】进行绑定",
         ],
         -3: [

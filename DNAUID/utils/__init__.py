@@ -1,4 +1,5 @@
 from .dna_api import dna_api
+from .privacy import check_uid_privacy, get_display_uid
 from .utils import (
     TZ,
     TimedCache,
@@ -20,4 +21,6 @@ __all__ = [
     "get_two_days_ago_date",
     "get_datetime",
     "TZ",
+    "check_uid_privacy",
+    "get_display_uid",
 ]

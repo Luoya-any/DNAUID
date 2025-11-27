@@ -70,12 +70,17 @@ async def _draw_sign_calendar(
     card = get_dna_bg(1300, h, "bg1")
 
     start_y = 30
+    # 获取用于显示的UID
+    from ..utils import get_display_uid
+    display_uid = await get_display_uid(role_show.roleId, ev.user_id, ev.bot_id)
+    
     # title
     avatar_title = await get_avatar_title_img(
         ev,
-        role_show.roleId,
+        role_show.roleId,  # 原始uid（不直接显示）
         role_show.roleName,
         user_level=role_show.level,
+        display_uid=display_uid,  # 用于显示的uid
     )
     card.alpha_composite(avatar_title, (0, start_y))
     start_y += title_h

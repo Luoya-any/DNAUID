@@ -92,24 +92,32 @@ class DNALoginService:
         if not role_ids_msg:
             return complete_error_msg
 
+        # 获取用于显示的UID
+        from ..utils import get_display_uid
+
         msg = ["登录成功, 已为您绑定以下角色:"]
         for role in role_ids_msg:
-            msg.append(f"- UID: [{role['uid']}] 名字: {role['name']}")
+            uid = role["uid"]  # 原始uid（用于API调用）
+            display_uid = await get_display_uid(uid, user_id, bot_id)  # 用于显示的uid
+            msg.append(f"- UID: [{display_uid}] 名字: {role['name']}")
         return "\n".join(msg)
 
     async def get_cookie(self) -> Union[List[str], str]:
+        from ..utils import get_display_uid
+
         uid_list = await DNABind.get_uid_list_by_game(self.ev.user_id, self.ev.bot_id)
         if not uid_list:
             return "您当前未绑定token或者token已全部失效\n"
 
         msg = []
-        for uid in uid_list:
+        for uid in uid_list:  # uid = 原始uid（用于API调用）
             dna_user: Optional[DNAUser] = await dna_api.get_dna_user(
                 uid, self.ev.user_id, self.ev.bot_id
             )
             if not dna_user:
                 continue
-            msg.append(f"二重螺旋uid: {uid}")
+            display_uid = await get_display_uid(uid, self.ev.user_id, self.ev.bot_id)  # 用于显示的uid
+            msg.append(f"二重螺旋uid: {display_uid}")
             msg.append(f"token: {dna_user.cookie}")
             msg.append("--------------------------------")
 

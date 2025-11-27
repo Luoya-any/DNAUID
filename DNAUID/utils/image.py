@@ -261,7 +261,19 @@ async def get_avatar_title_img(
     name: str,
     user_level: Optional[int] = None,
     other_info: Optional[list[tuple[str, str]]] = None,
+    display_uid: Optional[str] = None,
 ):
+    """
+    生成头像标题图片
+    
+    Args:
+        ev: 事件对象
+        uid: 原始完整UID（用于API调用，不直接显示）
+        name: 角色名称
+        user_level: 用户等级
+        other_info: 其他信息列表
+        display_uid: 用于显示的UID（如果为None，则使用uid）
+    """
     from .fonts.dna_fonts import (
         dna_font_20,
         dna_font_24,
@@ -287,9 +299,13 @@ async def get_avatar_title_img(
         target=img,
     )
 
+    # 使用 display_uid 进行显示
+    # 如果没有提供 display_uid，则使用原始 uid
+    uid_text = f"UID {display_uid if display_uid else uid}"
+
     draw.text(
         (330, 160),
-        f"UID {uid}",
+        uid_text,
         COLOR_BLACK,
         dna_font_30,
         "lm",
